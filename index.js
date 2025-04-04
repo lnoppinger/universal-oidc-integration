@@ -2,6 +2,7 @@ import express from "express"
 import morgan from "morgan"
 import { configDotenv } from "dotenv"
 import { createProxyMiddleware, responseInterceptor } from "http-proxy-middleware"
+import {auth} from "express-openid-connect"
 
 configDotenv()
 
@@ -11,6 +12,8 @@ if(process.env.PASSWORD_SELECTOR == null) process.env.PASSWORD_SELECTOR = "input
 if(process.env.SUBMIT_BUTTON_SELECTOR == null) process.env.SUBMIT_BUTTON_SELECTOR = "button"
 if(process.env.NO_LOGIN_CHECK_REGEX == null) process.env.NO_LOGIN_CHECK_REGEX = "api"
 if(process.env.WAIT_BEFORE_LOGIN_CHECK == null) process.env.WAIT_BEFORE_LOGIN_CHECK = 1200
+if(process.env.OIDC_BASE_URL == null)  process.env.OIDC_BASE_URL = "http://localhost"
+process.env.DEV_SKIP_AUTH = process.env.DEV_SKIP_AUTH?.toLocaleLowerCase() == "true"
 
 let configKeys = [
     "URL",
@@ -20,7 +23,12 @@ let configKeys = [
     "PASSWORD_SELECTOR",
     "SUBMIT_BUTTON_SELECTOR",
     "NO_LOGIN_CHECK_REGEX",
-    "WAIT_BEFORE_LOGIN_CHECK"
+    "WAIT_BEFORE_LOGIN_CHECK",
+    "OIDC_ISSUER_URL",
+    "OIDC_BASE_URL",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "DEV_SKIP_AUTH"
 ]
 let config = {}
 configKeys.forEach(key => {
@@ -42,6 +50,18 @@ if(process.env.UNSECURE_MODE?.toLocaleLowerCase() == "true") console.warn(`
 const app = express()
 
 app.use(morgan("dev"))
+
+if(process.env.DEV_SKIP_AUTH != "true") {
+    app.use(
+        auth({
+            issuerBaseURL: process.env.OIDC_ISSUER_URL,
+            baseURL: process.env.OIDC_BASE_URL,
+            clientID: process.env.OIDC_CLIENT_ID,
+            secret: process.env.OIDC_CLIENT_SECRET,
+            idpLogout: true
+        })
+    )
+}
 
 app.get("/uoi/client.js", (req, res) => {
     res.setHeader("Content-Type", "application/javascript")
