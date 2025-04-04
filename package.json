@@ -4,9 +4,8 @@
   "description": "Use existing oidc authentication for everything",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -L start.js",
-    "start": "node ./start.js",
-    "test": "ava --config='tests/generate-ava-config.js'"
+    "dev": "nodemon -L index.js",
+    "start": "node ./index.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +25,6 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "ava": "^6.2.0",
     "nodemon": "^3.1.9"
   },
   "type": "module"
