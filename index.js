@@ -110,7 +110,7 @@ let wsProxy = createProxyMiddleware({
         }
     }
 })
-// app.all(new RegExp(process.env.NO_LOGIN_CHECK_REGEX, "gm"), wsProxy)
+app.all(new RegExp(process.env.NO_LOGIN_CHECK_REGEX, "gm"), wsProxy)
 
 app.use(
     createProxyMiddleware({
