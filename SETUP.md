@@ -53,5 +53,5 @@ services:
             - OIDC_ISSUER_URL=https://<keycloak url>/auth/realms/master
             - OIDC_BASE_URL=http://localhost # root url from step 5
             - OIDC_CLIENT_ID=universal-oidc-integration # Client id from step 5
-            - OIDC_CLEINT_SECRET=<secret from step 7>
+            - OIDC_CLIENT_SECRET=<secret from step 7>
 ```
