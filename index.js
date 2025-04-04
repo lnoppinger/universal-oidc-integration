@@ -11,7 +11,8 @@ if(process.env.USERNAME_SELECTOR == null) process.env.USERNAME_SELECTOR = "input
 if(process.env.PASSWORD_SELECTOR == null) process.env.PASSWORD_SELECTOR = "input[placeholder=Password]"
 if(process.env.SUBMIT_BUTTON_SELECTOR == null) process.env.SUBMIT_BUTTON_SELECTOR = "button"
 if(process.env.NO_LOGIN_CHECK_REGEX == null) process.env.NO_LOGIN_CHECK_REGEX = "api"
-if(process.env.WAIT_BEFORE_LOGIN_CHECK == null) process.env.WAIT_BEFORE_LOGIN_CHECK = 1200
+if(process.env.LOGIN_CHECK_DELAY == null) process.env.LOGIN_CHECK_DELAY = 1200
+if(process.env.LOGIN_CHECK_INTERVAL == null) process.env.LOGIN_CHECK_INTERVAL = -1
 if(process.env.OIDC_BASE_URL == null)  process.env.OIDC_BASE_URL = "http://localhost"
 process.env.DEV_SKIP_AUTH = process.env.DEV_SKIP_AUTH?.toLocaleLowerCase() == "true"
 
@@ -23,7 +24,8 @@ let configKeys = [
     "PASSWORD_SELECTOR",
     "SUBMIT_BUTTON_SELECTOR",
     "NO_LOGIN_CHECK_REGEX",
-    "WAIT_BEFORE_LOGIN_CHECK",
+    "LOGIN_CHECK_DELAY",
+    "LOGIN_CHECK_INTERVAL",
     "OIDC_ISSUER_URL",
     "OIDC_BASE_URL",
     "OIDC_CLIENT_ID",
@@ -66,10 +68,18 @@ if(process.env.DEV_SKIP_AUTH != "true") {
 app.get("/uoi/client.js", (req, res) => {
     res.setHeader("Content-Type", "application/javascript")
     res.send(`
-        document.addEventListener("DOMContentLoaded", async () => {
-            await new Promise(resolve => {setTimeout(resolve, ${process.env.WAIT_BEFORE_LOGIN_CHECK})})
+        let loginCheckInterval = ${process.env.LOGIN_CHECK_INTERVAL}
+        let loginCheckDelay = ${process.env.LOGIN_CHECK_DELAY}
 
-            let usernameInput = document.querySelector("${process.env.USERNAME_SELECTOR}")
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(loginCheck, loginCheckDelay)
+
+            if(loginCheckInterval < 0) return
+            setInterval(loginCheck, loginCheckInterval)
+        })
+
+        function loginCheck() {
+            let usernameInput = document.querySelector("${process.env.USERNAME_SELECTOR.replace(/"/g, "'")}")
             let passwordInput = document.querySelector("${process.env.PASSWORD_SELECTOR}")
             let submitButton = document.querySelector("${process.env.SUBMIT_BUTTON_SELECTOR}")
 
@@ -84,7 +94,7 @@ app.get("/uoi/client.js", (req, res) => {
             passwordInput.value = "${process.env.PASSWORD}"
             passwordInput.dispatchEvent(new Event("change"))
             submitButton.click()
-        })
+        }
     `)
 })
 
@@ -100,7 +110,7 @@ let wsProxy = createProxyMiddleware({
         }
     }
 })
-app.all(new RegExp(process.env.NO_LOGIN_CHECK_REGEX, "gm"), wsProxy)
+// app.all(new RegExp(process.env.NO_LOGIN_CHECK_REGEX, "gm"), wsProxy)
 
 app.use(
     createProxyMiddleware({
@@ -109,7 +119,7 @@ app.use(
         selfHandleResponse: true,
         on: {
             proxyRes: responseInterceptor( async (responseBuffer, proxyRes, req, res) => {
-                if(proxyRes.headers["content-type"] != "text/html" || req.method.toLowerCase() != "get") return responseBuffer
+                if(!proxyRes.headers["content-type"].includes("text/html") || req.method.toLowerCase() != "get") return responseBuffer
 
                 let body = responseBuffer.toString("utf-8")
                 if(body.substring(0, 15).toLowerCase() != "<!doctype html>") return responseBuffer

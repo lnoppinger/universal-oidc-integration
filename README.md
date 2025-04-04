@@ -23,7 +23,8 @@ Be aware that the credentials for accessing the original server can be extracted
 | PASSWORD_SELECTOR       | optional (input[placeholder=Password]) | Same as USERNAME_SELECTOR |
 | SUBMIT_BUTTON_SELECTOR  | optional (button)                      | Same as USERNAME_SELECTOR |
 | NO_LOGIN_CHECK_REGEX    | optional (api)                         | Regex (formated to: /api/gm) for paths that don't want to be tampered with.<br>Examples: websockets, video streams, server side events |
-| WAIT_BEFORE_LOGIN_CHECK | optional (1200)                        | Time waited (in ms) after DOMContentLoaded was triggered to ensure the page is fully loaded. before checks for login start on the client side |
+| LOGIN_CHECK_DELAY       | optional (1200)                        | Time waited (in ms) after DOMContentLoaded was triggered to ensure the page is fully loaded. 
+| LOGIN_CHECK_INTERVAL    | optional (-1)                          | Periodic check for the login page (in ms). Negative values diable this feature. |
 | OIDC_ISSUER_URL         | required                               | Base url for the oidc issuer. <br> Example for Keycloak: https://auth.mydomain.com/auth/realms/master <br> [More documentation](https://github.com/auth0/express-openid-connect?tab=readme-ov-file#configuring-the-sdk) |
 | OIDC_CLIENT_ID          | required                               | Client id for the oidc issuer. |
 | OIDC_CLIENT_SECRET      | required                               | Secret for the client id (OIDC-Acces Type must be set to confidential on the issuer). |
