@@ -6,14 +6,15 @@ import {auth} from "express-openid-connect"
 
 configDotenv()
 
-if(process.env.URL?.endsWith("/")) process.env.URL = process.env.URL.substring(0, process.env.URL.length -1)
-if(process.env.USERNAME_SELECTOR == null) process.env.USERNAME_SELECTOR = "input[placeholder=Username]"
-if(process.env.PASSWORD_SELECTOR == null) process.env.PASSWORD_SELECTOR = "input[placeholder=Password]"
+if(process.env.USERNAME_SELECTOR      == null) process.env.USERNAME_SELECTOR = "input[placeholder=Username]"
+if(process.env.PASSWORD_SELECTOR      == null) process.env.PASSWORD_SELECTOR = "input[placeholder=Password]"
 if(process.env.SUBMIT_BUTTON_SELECTOR == null) process.env.SUBMIT_BUTTON_SELECTOR = "button"
-if(process.env.NO_LOGIN_CHECK_REGEX == null) process.env.NO_LOGIN_CHECK_REGEX = "api"
-if(process.env.LOGIN_CHECK_DELAY == null) process.env.LOGIN_CHECK_DELAY = 1200
-if(process.env.LOGIN_CHECK_INTERVAL == null) process.env.LOGIN_CHECK_INTERVAL = -1
-if(process.env.OIDC_BASE_URL == null)  process.env.OIDC_BASE_URL = "http://localhost"
+if(process.env.NO_LOGIN_CHECK_REGEX   == null) process.env.NO_LOGIN_CHECK_REGEX = "api"
+if(process.env.LOGIN_CHECK_DELAY      == null) process.env.LOGIN_CHECK_DELAY = 1200
+if(process.env.LOGIN_CHECK_INTERVAL   == null) process.env.LOGIN_CHECK_INTERVAL = -1
+if(process.env.OIDC_BASE_URL          == null) process.env.OIDC_BASE_URL = "http://localhost"
+
+if(process.env.URL?.endsWith("/")) process.env.URL = process.env.URL.substring(0, process.env.URL.length -1)
 process.env.DEV_SKIP_AUTH = process.env.DEV_SKIP_AUTH?.toLocaleLowerCase() == "true"
 
 let configKeys = [
@@ -80,8 +81,8 @@ app.get("/uoi/client.js", (req, res) => {
 
         function loginCheck() {
             let usernameInput = document.querySelector("${process.env.USERNAME_SELECTOR.replace(/"/g, "'")}")
-            let passwordInput = document.querySelector("${process.env.PASSWORD_SELECTOR}")
-            let submitButton = document.querySelector("${process.env.SUBMIT_BUTTON_SELECTOR}")
+            let passwordInput = document.querySelector("${process.env.PASSWORD_SELECTOR.replace(/"/g, "'")}")
+            let submitButton = document.querySelector("${process.env.SUBMIT_BUTTON_SELECTOR.replace(/"/g, "'")}")
 
             if(usernameInput == null || passwordInput == null || submitButton == null) {
                 console.log("[uoi]     No login page detected.")
