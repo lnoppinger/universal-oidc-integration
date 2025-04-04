@@ -1,0 +1,32 @@
+{
+  "name": "universal-oidc-integration",
+  "version": "1.0.0",
+  "description": "Use existing oidc authentication for everything",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -L start.js",
+    "start": "node ./start.js",
+    "test": "ava --config='tests/generate-ava-config.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lnoppinger/universal-oidc-integration.git"
+  },
+  "author": "lnoppinger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lnoppinger/universal-oidc-integration/issues"
+  },
+  "homepage": "https://github.com/lnoppinger/universal-oidc-integration#readme",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "ava": "^6.2.0",
+    "nodemon": "^3.1.9"
+  },
+  "type": "module"
+}
