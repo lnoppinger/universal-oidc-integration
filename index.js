@@ -120,7 +120,7 @@ app.use(
         selfHandleResponse: true,
         on: {
             proxyRes: responseInterceptor( async (responseBuffer, proxyRes, req, res) => {
-                if(!proxyRes.headers["content-type"].includes("text/html") || req.method.toLowerCase() != "get") return responseBuffer
+                if(!proxyRes.headers["content-type"]?.includes("text/html") || req.method.toLowerCase() != "get") return responseBuffer
 
                 let body = responseBuffer.toString("utf-8")
                 if(body.substring(0, 15).toLowerCase() != "<!doctype html>") return responseBuffer
